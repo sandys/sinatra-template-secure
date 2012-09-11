@@ -11,6 +11,7 @@ gem "capistrano"
 gem 'sinatra-reloader'
 gem 'bcrypt-ruby'
 gem 'pry'
+gem 'uuidtools'
 
 gem "haml"
 #gem 'mustache'

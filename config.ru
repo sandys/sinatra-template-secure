@@ -7,4 +7,16 @@ require ::File.join( ::File.dirname(__FILE__), 'app' )
 #Clearly, Rack::Reloader is not very useful if you can’t change the contents of any route. The solution is to throw away the old routes when the file is reloaded using  Reset!
 #This will be done from inside the app 
 use Rack::Reloader if development?
-run App.new
+
+
+incrementor = lambda do |env|
+    Rack::Response.new(env["rack.session"].inspect).to_a
+    puts "in incrementor"
+end
+
+myapp = App.new
+sessioned = Rack::Session::Pool.new(myapp,
+    :expire_after => 2592000
+  )
+run sessioned
+#run myapp 
