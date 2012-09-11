@@ -17,23 +17,33 @@ class App < Sinatra::Base
     #super calls the "get", "post", etc. functions
     status, headers, body = super
     headers['X-Middleware'] = 'true'
+    puts "d - > #{headers}"
+    Rack::Utils.set_cookie_header! headers, :last_access,  {:value => Time.now.utc,:expires => (Time.now + 52*7*24*60*60) }
     [status, headers, body]
   end
   
   configure :development do
+    #also_reload 'helpers/*.rb'
+    #also_reload 'models/*.rb'
+    enable :reload_templates
     self.settings.reset!
   end
 
-  get "/" do
-    session[:session_id] = UUIDTools::UUID.timestamp_create.to_s
-    puts "coming to sss4"
-     #r = Rack::Response.new("SSS")
-     response.set_cookie "user_id", {:value => "sss", 
-                                :expires => (Time.now + 52*7*24*60*60)}
-     response.headers['X-SSS'] = "SSS"
-     response.body = "SSS"
+  helpers do
+    def cache_for(time)
+      response.headers['Cache-Control'] = "public, max-age=#{time.to_i}"
+    end
+  end
 
-     response.finish
+  get "/" do
+    cache_for 10*80
+    session[:session_id] = UUIDTools::UUID.timestamp_create.to_s
+
+    response.set_cookie "user_id", {:value => "sss", 
+                                    :expires => (Time.now + 52*7*24*60*60)}
+    response.headers['X-SSS'] = "SSS"
+    response.body = "SSS"
+    response.finish
   end
 
 end
