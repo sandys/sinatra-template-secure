@@ -14,6 +14,7 @@ incrementor = lambda do |env|
     puts "in incrementor"
 end
 
+App.set :time_at_startup, Time.now
 myapp = App.new
 sessioned = Rack::Session::Pool.new(myapp,
     :expire_after => 2592000
