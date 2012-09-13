@@ -13,7 +13,7 @@ gem 'bcrypt-ruby'
 gem 'pry'
 gem 'uuidtools'
 
-gem "haml"
+gem "slim"
 #gem 'mustache'
 #gem "ruby-debug"
 
