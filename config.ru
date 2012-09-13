@@ -1,10 +1,6 @@
-#require 'rack/protection'
-#use Rack::Protection, :except => :xss_header
-#use Rack::Protection::AuthenticityToken
 require 'bundler'
 Bundler.require
 
-require 'sinatra'
 require 'rack'
 require 'rack/session/pool'
 
@@ -27,12 +23,12 @@ incrementor = lambda do |env|
     puts "in incrementor"
 end
 
+#these variables are not available in "settings" in the modular app
 App.set :time_at_startup, Time.now
 App.set :session_key, "sss" 
-#set :session_key, "sss" 
 App.set :session_secret, "fflgjfljglfkjglfjg" 
-#set :session_secret, "fflgjfljglfkjglfjg" 
 
+#this works, but this is moot with the below method
 =begin
   myapp = App.new
   sessioned = Rack::Session::Pool.new(myapp,
@@ -43,16 +39,12 @@ App.set :session_secret, "fflgjfljglfkjglfjg"
   run sessioned
 =end
 
-#prot = Rack::Protection.new(sessioned,{:except => [:xss_header]})
-#run sessioned 
-
-b = Rack::Builder.new do
-   use  ::Rack::Session::Pool, :key => "sss", :secret => "dfkjdlfjldjfldjkkn909", :expire_after => 2592000
-   #use ::Rack::Protection::AuthenticityToken
+# a lot of this I figure out from rack-protection/lib/rack/protection.rb
+builder = Rack::Builder.new do
+   use ::Rack::Session::Pool, :key => "sss", :secret => "dfkjdlfjldjfldjkkn909", :expire_after => 2592000
+   use ::Rack::Protection::AuthenticityToken
    use ::Rack::MethodOverride
-
   run App
 end.to_app
 
-#run App 
-run b
+run builder

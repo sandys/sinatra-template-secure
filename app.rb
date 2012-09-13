@@ -24,27 +24,11 @@ class SSSAuthenticityToken < Rack::Protection::AuthenticityToken
 end
 
 class App < Sinatra::Base
-  enable :logging
-#configure do
-    #use ::Rack::Protection::AuthenticityToken, {}
-    set :protection, :except => [:authenticity_token, :form_token, :json_csrf, :remote_referrer, :form_token, :escaped_params, :frame_options, :path_traversal, :session_hijacking, :ip_spoofing]
-    #use Rack::Protection::FormToken
-    #disable :protection
-    #use ::Rack::MethodOverride
-    #use Rack::Session::Cookie, :secret => "sss" 
-    #use ::Rack::Session::Pool, :key => "sss", :secret => "dfjd;fj;dfj;df;ldfl;df;", :expire_after => 2592000 
-    #use ::Rack::Protection::AuthenticityToken
-    #use SSSAuthenticityToken
-    #enable :sessions, :logging
-#end
 
-#  use Rack::Session::Pool
-  #use Rack::Session::PersistentSessions, 'sqlite://blog.db'
-  #use Rack::Session::Persistent
-  #enable :sessions
-
-
-  #set :protection
+  configure do
+      enable :logging
+      set :protection, :except => [:authenticity_token, :form_token, :json_csrf, :remote_referrer, :form_token, :escaped_params, :frame_options, :path_traversal, :session_hijacking, :ip_spoofing]
+  end
 
   def call(env)
     #global logging
@@ -52,9 +36,6 @@ class App < Sinatra::Base
     puts 'manager: ' + env['REQUEST_METHOD'] + ' ' + env['REQUEST_URI'] + " session_key = #{settings.session_key}"
     #super calls the "get", "post", etc. functions
     status, headers, body = super
-
-    #session = session env
-    #puts "session key = #{session[:key]}"
 
     headers['X-Middleware'] = 'true'
     Rack::Utils.set_cookie_header! headers, :last_access,  {:value => Time.now.utc,:expires => (Time.now + 52*7*24*60*60) }
@@ -74,6 +55,8 @@ class App < Sinatra::Base
       response.headers['Cache-Control'] = "public, max-age=#{time.to_i}"
     end
 
+    # to get your cookies do ```curl -c cookies.txt -i -L http://localhost:9292 ```
+    # to send your cookie do ```curl -b cookies.txt -i -L http://localhost:9292 ```
     def csrf_token
       session[:csrf] ||= SecureRandom.hex 32
     end
