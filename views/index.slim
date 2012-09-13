@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    meta charset="utf-8"
+    title Slim form
+
+  body
+    | hi this is sandeep
+    form.update action="/submit/" method="POST"
+      input type="hidden" name="authenticity_token" value=csrf_token.to_s
+      input type="submit" value="Submit" title="Complete Task"
+
