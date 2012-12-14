@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source :rubygems
 
 gem "sinatra"
 gem "sinatra_warden"
@@ -20,6 +20,7 @@ gem "slim"
 platforms :ruby do
   gem "shotgun"
   gem "thin"
+  gem "unicorn"
 end
 
 platforms :jruby do
@@ -29,5 +30,5 @@ platforms :jruby do
   gem 'jdbc-postgres'
   gem 'trinidad'
   gem "warbler"
-  gem "rack-session-persistent", :path => "../GEMS/rack-session-persistent"
+#  gem "rack-session-persistent", :path => "../GEMS/rack-session-persistent"
 end
